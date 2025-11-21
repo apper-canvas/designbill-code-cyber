@@ -199,18 +199,20 @@ const Header = ({ className = "" }) => {
               size="sm"
               className="relative"
             >
-              <ApperIcon name="Bell" size={20} />
+<ApperIcon name="Bell" size={20} />
               <span className="absolute -top-1 -right-1 h-2 w-2 bg-accent-500 rounded-full"></span>
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleLogout}
-              icon="LogOut"
-              className="text-gray-600 hover:text-error"
-            >
-              <span className="hidden sm:inline">Logout</span>
-            </Button>
+            {isAuthenticated && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                icon="LogOut"
+                className="text-gray-600 hover:text-error"
+              >
+                <span className="hidden sm:inline">Logout</span>
+              </Button>
+            )}
           </div>
         </div>
       </div>
