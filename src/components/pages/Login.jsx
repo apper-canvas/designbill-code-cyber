@@ -6,7 +6,7 @@ import Button from '@/components/atoms/Button'
 import FormField from '@/components/molecules/FormField'
 import ApperIcon from '@/components/ApperIcon'
 import { loginStart, loginSuccess, loginFailure, clearError } from '@/store/authSlice'
-import { userService } from '@/services/api/userService'
+import userService from '@/services/api/userService'
 
 const Login = () => {
   const dispatch = useDispatch()
