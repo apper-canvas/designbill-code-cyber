@@ -1,0 +1,26 @@
+[
+  {
+    "Id": 1,
+    "invoiceId": 1,
+    "stripePaymentId": "pi_1234567890abcdef",
+    "amount": 4312.88,
+    "status": "Completed",
+    "paidAt": "2024-02-28T15:30:00Z"
+  },
+  {
+    "Id": 2,
+    "invoiceId": 4,
+    "stripePaymentId": "pi_abcdef1234567890",
+    "amount": 11738.80,
+    "status": "Completed",
+    "paidAt": "2023-12-20T10:45:00Z"
+  },
+  {
+    "Id": 3,
+    "invoiceId": 6,
+    "stripePaymentId": "pi_xyz123abc456def7",
+    "amount": 32092.50,
+    "status": "Completed",
+    "paidAt": "2024-02-25T09:30:00Z"
+  }
+]

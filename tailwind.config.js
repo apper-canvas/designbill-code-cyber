@@ -1,0 +1,73 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#f0f9f9',
+          100: '#e0f3f3',
+          200: '#c0e7e8',
+          300: '#94d6d8',
+          400: '#5fb8bc',
+          500: '#2C5F63',
+          600: '#264d51',
+          700: '#213f42',
+          800: '#1c3436',
+          900: '#172b2d',
+        },
+        secondary: {
+          50: '#f9f7f4',
+          100: '#f2ede6',
+          200: '#e5d9cc',
+          300: '#d4c0a8',
+          400: '#c1a382',
+          500: '#8B7355',
+          600: '#7a6348',
+          700: '#66523c',
+          800: '#524232',
+          900: '#42362a',
+        },
+        accent: {
+          50: '#fdf8f0',
+          100: '#faf0e0',
+          200: '#f5dfc0',
+          300: '#edc994',
+          400: '#e3b066',
+          500: '#D4A574',
+          600: '#c08a42',
+          700: '#a17138',
+          800: '#835b30',
+          900: '#6b4a29',
+        },
+        surface: '#F8F6F4',
+        success: '#4A7C59',
+        warning: '#C17817',
+        error: '#B94A48',
+        info: '#5B8BA0',
+      },
+      fontFamily: {
+        'display': ['Playfair Display', 'serif'],
+        'sans': ['Inter', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        'xs': '12px',
+        'sm': '14px',
+        'base': '16px',
+        'lg': '20px',
+        'xl': '24px',
+        '2xl': '30px',
+        '3xl': '38px',
+      },
+      boxShadow: {
+        'card': '0 2px 8px rgba(0, 0, 0, 0.08)',
+        'card-hover': '0 4px 12px rgba(0, 0, 0, 0.12)',
+        'premium': '0 8px 32px rgba(44, 95, 99, 0.15)',
+      },
+    },
+  },
+  plugins: [],
+}
