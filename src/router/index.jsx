@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react"
 import { createBrowserRouter } from "react-router-dom"
 import Layout from "@/components/organisms/Layout"
+import ProtectedRoute from "@/components/auth/ProtectedRoute"
 
 const Home = lazy(() => import("@/components/pages/Home"))
 const Dashboard = lazy(() => import("@/components/pages/Dashboard"))
@@ -11,6 +12,8 @@ const Clients = lazy(() => import("@/components/pages/Clients"))
 const Projects = lazy(() => import("@/components/pages/Projects"))
 const Settings = lazy(() => import("@/components/pages/Settings"))
 const NotFound = lazy(() => import("@/components/pages/NotFound"))
+const Login = lazy(() => import("@/components/pages/Login"))
+const Signup = lazy(() => import("@/components/pages/Signup"))
 
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-surface to-primary-50">
@@ -23,7 +26,6 @@ const LoadingFallback = () => (
     </div>
   </div>
 )
-
 const mainRoutes = [
   {
     path: "",
@@ -31,36 +33,44 @@ const mainRoutes = [
     element: <Suspense fallback={<LoadingFallback />}><Home /></Suspense>
   },
   {
+    path: "login",
+    element: <Suspense fallback={<LoadingFallback />}><Login /></Suspense>
+  },
+  {
+    path: "signup",
+    element: <Suspense fallback={<LoadingFallback />}><Signup /></Suspense>
+  },
+  {
     path: "dashboard",
-    element: <Suspense fallback={<LoadingFallback />}><Dashboard /></Suspense>
+    element: <ProtectedRoute><Suspense fallback={<LoadingFallback />}><Dashboard /></Suspense></ProtectedRoute>
   },
   {
     path: "invoices",
-    element: <Suspense fallback={<LoadingFallback />}><Invoices /></Suspense>
+    element: <ProtectedRoute><Suspense fallback={<LoadingFallback />}><Invoices /></Suspense></ProtectedRoute>
   },
   {
     path: "invoices/new",
-    element: <Suspense fallback={<LoadingFallback />}><InvoiceCreate /></Suspense>
+    element: <ProtectedRoute><Suspense fallback={<LoadingFallback />}><InvoiceCreate /></Suspense></ProtectedRoute>
   },
   {
     path: "invoices/:id",
-    element: <Suspense fallback={<LoadingFallback />}><InvoiceDetail /></Suspense>
+    element: <ProtectedRoute><Suspense fallback={<LoadingFallback />}><InvoiceDetail /></Suspense></ProtectedRoute>
   },
   {
     path: "invoices/:id/edit",
-    element: <Suspense fallback={<LoadingFallback />}><InvoiceCreate /></Suspense>
+    element: <ProtectedRoute><Suspense fallback={<LoadingFallback />}><InvoiceCreate /></Suspense></ProtectedRoute>
   },
   {
     path: "clients",
-    element: <Suspense fallback={<LoadingFallback />}><Clients /></Suspense>
+    element: <ProtectedRoute><Suspense fallback={<LoadingFallback />}><Clients /></Suspense></ProtectedRoute>
   },
   {
     path: "projects",
-    element: <Suspense fallback={<LoadingFallback />}><Projects /></Suspense>
+    element: <ProtectedRoute><Suspense fallback={<LoadingFallback />}><Projects /></Suspense></ProtectedRoute>
   },
   {
     path: "settings",
-    element: <Suspense fallback={<LoadingFallback />}><Settings /></Suspense>
+    element: <ProtectedRoute><Suspense fallback={<LoadingFallback />}><Settings /></Suspense></ProtectedRoute>
   },
   {
     path: "*",

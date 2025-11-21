@@ -1,4 +1,4 @@
-import usersData from "@/services/mockData/users.json"
+import usersData from "@/services/mockData/users.json";
 
 class UserService {
   constructor() {
@@ -6,7 +6,7 @@ class UserService {
   }
 
   async getAll() {
-    await this.delay(300)
+    await this.delay(200)
     return [...this.users]
   }
 

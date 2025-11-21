@@ -1,14 +1,25 @@
 import React, { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+import { useSelector, useDispatch } from "react-redux"
 import Button from "@/components/atoms/Button"
 import ApperIcon from "@/components/ApperIcon"
 import { cn } from "@/utils/cn"
+import { logout } from "@/store/authSlice"
+import { toast } from "react-toastify"
 
 const Header = ({ className = "" }) => {
   const location = useLocation()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { isAuthenticated, user } = useSelector(state => state.auth)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isHomePage = location.pathname === "/"
+
+  const handleLogout = () => {
+    dispatch(logout())
+    toast.success("Logged out successfully")
+    navigate("/")
+  }
 
   // Home page header
   if (isHomePage) {
@@ -37,13 +48,41 @@ const Header = ({ className = "" }) => {
               <a href="#pricing" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
                 Pricing
               </a>
-              <Button 
-                variant="primary" 
-                onClick={() => navigate("/dashboard")}
-                className="ml-4"
-              >
-                Get Started
-              </Button>
+{!isAuthenticated ? (
+                <div className="flex items-center gap-3">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate("/login")}
+                  >
+                    Login
+                  </Button>
+                  <Button 
+                    variant="primary" 
+                    onClick={() => navigate("/signup")}
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-gray-700">
+                    Welcome, {user?.name}
+                  </span>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate("/dashboard")}
+                  >
+                    Dashboard
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={handleLogout}
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    <ApperIcon name="LogOut" size={16} />
+                  </Button>
+                </div>
+              )}
             </nav>
 
             {/* Mobile menu button */}
@@ -69,13 +108,46 @@ const Header = ({ className = "" }) => {
               <a href="#pricing" className="block text-gray-700 hover:text-primary-600 font-medium transition-colors">
                 Pricing
               </a>
-              <Button 
-                variant="primary" 
-                onClick={() => navigate("/dashboard")}
-                className="w-full mt-4"
-              >
-                Get Started
-              </Button>
+{!isAuthenticated ? (
+                <div className="space-y-3">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate("/login")}
+                    className="w-full"
+                  >
+                    Login
+                  </Button>
+                  <Button 
+                    variant="primary" 
+                    onClick={() => navigate("/signup")}
+                    className="w-full"
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="text-center">
+                    <span className="text-sm font-medium text-gray-700">
+                      Welcome, {user?.name}
+                    </span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate("/dashboard")}
+                    className="w-full"
+                  >
+                    Dashboard
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={handleLogout}
+                    className="w-full text-gray-600 hover:text-gray-800"
+                  >
+                    Logout
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>
