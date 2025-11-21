@@ -141,7 +141,7 @@ class UserService {
         records: [record]
       };
 
-      const response = await apperClient.updateRecord(this.tableName, params);
+const response = await apperClient.updateRecord(this.tableName, params);
       
       if (!response.success) {
         console.error(response.message);
@@ -162,6 +162,9 @@ class UserService {
         }
         return successful.length > 0 ? successful[0].data : null;
       }
+
+      // Fallback return in case response.results is not present
+      return null;
     } catch (error) {
       console.error("Error updating user:", error?.response?.data?.message || error);
       return null;
