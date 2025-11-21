@@ -201,8 +201,8 @@ async register(userData) {
     return { success: true };
   }
 
-  // File upload methods for logo
-async uploadLogo(file) {
+// File upload methods for logo
+  async uploadLogo(file) {
     try {
       // This will be handled by ApperFileFieldComponent
       // Return a placeholder response
@@ -210,7 +210,7 @@ async uploadLogo(file) {
     } catch (error) {
       console.error("Error uploading logo:", error);
       return { success: false, error: error.message };
-}
+    }
   }
 }
 
