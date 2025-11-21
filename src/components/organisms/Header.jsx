@@ -1,24 +1,28 @@
 import React, { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
+import { useAuth } from "@/layouts/Root"
 import Button from "@/components/atoms/Button"
 import ApperIcon from "@/components/ApperIcon"
 import { cn } from "@/utils/cn"
-import { logout } from "@/store/authSlice"
 import { toast } from "react-toastify"
 
 const Header = ({ className = "" }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const { isAuthenticated, user } = useSelector(state => state.auth)
+  const { logout } = useAuth()
+  const { isAuthenticated, user } = useSelector(state => state.user)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const isHomePage = location.pathname === "/"
 
-  const handleLogout = () => {
-    dispatch(logout())
-    toast.success("Logged out successfully")
-    navigate("/")
+  const handleLogout = async () => {
+    try {
+      await logout()
+      toast.success("Logged out successfully")
+    } catch (error) {
+      console.error("Logout failed:", error)
+      toast.error("Logout failed")
+    }
   }
 
   // Home page header
@@ -48,7 +52,7 @@ const Header = ({ className = "" }) => {
               <a href="#pricing" className="text-gray-700 hover:text-primary-600 font-medium transition-colors">
                 Pricing
               </a>
-{!isAuthenticated ? (
+              {!isAuthenticated ? (
                 <div className="flex items-center gap-3">
                   <Button 
                     variant="outline" 
@@ -66,7 +70,7 @@ const Header = ({ className = "" }) => {
               ) : (
                 <div className="flex items-center gap-4">
                   <span className="text-sm font-medium text-gray-700">
-                    Welcome, {user?.name}
+                    Welcome, {user?.firstName || user?.name}
                   </span>
                   <Button 
                     variant="outline" 
@@ -108,7 +112,7 @@ const Header = ({ className = "" }) => {
               <a href="#pricing" className="block text-gray-700 hover:text-primary-600 font-medium transition-colors">
                 Pricing
               </a>
-{!isAuthenticated ? (
+              {!isAuthenticated ? (
                 <div className="space-y-3">
                   <Button 
                     variant="outline" 
@@ -129,7 +133,7 @@ const Header = ({ className = "" }) => {
                 <div className="space-y-3">
                   <div className="text-center">
                     <span className="text-sm font-medium text-gray-700">
-                      Welcome, {user?.name}
+                      Welcome, {user?.firstName || user?.name}
                     </span>
                   </div>
                   <Button 
@@ -184,7 +188,7 @@ const Header = ({ className = "" }) => {
             </h2>
           </div>
 
-{/* Actions */}
+          {/* Actions */}
           <div className="flex items-center gap-3">
             <Button
               variant="accent"
@@ -199,7 +203,7 @@ const Header = ({ className = "" }) => {
               size="sm"
               className="relative"
             >
-<ApperIcon name="Bell" size={20} />
+              <ApperIcon name="Bell" size={20} />
               <span className="absolute -top-1 -right-1 h-2 w-2 bg-accent-500 rounded-full"></span>
             </Button>
             {isAuthenticated && (

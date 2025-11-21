@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import Button from "@/components/atoms/Button"
-import Badge from "@/components/atoms/Badge"
-import Card from "@/components/atoms/Card"
-import SearchBar from "@/components/molecules/SearchBar"
-import Loading from "@/components/ui/Loading"
-import ErrorView from "@/components/ui/ErrorView"
-import Empty from "@/components/ui/Empty"
-import ApperIcon from "@/components/ApperIcon"
-import invoiceService from "@/services/api/invoiceService"
-import clientService from "@/services/api/clientService"
-import { format } from "date-fns"
-import { toast } from "react-toastify"
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { toast } from "react-toastify";
+import invoiceService from "@/services/api/invoiceService";
+import clientService from "@/services/api/clientService";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import ErrorView from "@/components/ui/ErrorView";
+import Empty from "@/components/ui/Empty";
+import Button from "@/components/atoms/Button";
+import Card from "@/components/atoms/Card";
+import Badge from "@/components/atoms/Badge";
+import SearchBar from "@/components/molecules/SearchBar";
 
 const Invoices = () => {
   const navigate = useNavigate()
@@ -55,30 +55,30 @@ const Invoices = () => {
     // Apply search filter
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase()
-      filtered = filtered.filter(invoice => 
-        invoice.invoiceNumber.toLowerCase().includes(searchLower) ||
-        getClientName(invoice.clientId).toLowerCase().includes(searchLower)
+filtered = filtered.filter(invoice => 
+        (invoice.invoice_number_c || invoice.invoiceNumber || "").toLowerCase().includes(searchLower) ||
+        getClientName(invoice.client_id_c || invoice.clientId).toLowerCase().includes(searchLower)
       )
     }
 
     // Apply status filter
     if (statusFilter !== "all") {
-      filtered = filtered.filter(invoice => invoice.status.toLowerCase() === statusFilter)
+filtered = filtered.filter(invoice => (invoice.status_c || invoice.status || "").toLowerCase() === statusFilter)
     }
 
     // Apply sorting
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "newest":
-          return new Date(b.createdAt) - new Date(a.createdAt)
+return new Date(b.CreatedOn || b.createdAt) - new Date(a.CreatedOn || a.createdAt)
         case "oldest":
           return new Date(a.createdAt) - new Date(b.createdAt)
         case "amount-high":
-          return b.total - a.total
+return (b.total_c || b.total || 0) - (a.total_c || a.total || 0)
         case "amount-low":
           return a.total - b.total
         case "due-date":
-          return new Date(a.dueDate) - new Date(b.dueDate)
+return new Date(a.due_date_c || a.dueDate) - new Date(b.due_date_c || b.dueDate)
         default:
           return 0
       }
@@ -87,13 +87,16 @@ const Invoices = () => {
     setFilteredInvoices(filtered)
   }
 
-  const getClientName = (clientId) => {
-    const client = clients.find(c => c.Id === clientId)
-    return client ? client.name : "Unknown Client"
+const getClientName = (clientLookup) => {
+    if (typeof clientLookup === 'object' && clientLookup?.Name) {
+      return clientLookup.Name;
+    }
+    const client = clients.find(c => c.Id === clientLookup);
+    return client?.Name || client?.name || "Unknown Client";
   }
 
   const getStatusVariant = (status) => {
-    switch (status) {
+switch (status) {
       case "Paid": return "success"
       case "Sent": return "info"
       case "Overdue": return "error"
@@ -130,15 +133,14 @@ const Invoices = () => {
         message: "Please find your invoice attached. Payment is due within 30 days."
       })
       
-      // Update local state
+// Update local state
       setInvoices(invoices.map(inv => 
-        inv.Id === invoiceId ? { ...inv, status: "Sent" } : inv
+        inv.Id === invoiceId ? { ...inv, status_c: "Sent", status: "Sent" } : inv
       ))
       
       toast.success("Invoice sent successfully")
     } catch (err) {
       toast.error("Failed to send invoice")
-    }
   }
 
   const statusOptions = [
@@ -246,30 +248,30 @@ const Invoices = () => {
                         className="font-semibold text-primary-600 cursor-pointer hover:text-primary-700"
                         onClick={() => navigate(`/invoices/${invoice.Id}`)}
                       >
-                        {invoice.invoiceNumber}
+{invoice.invoice_number_c || invoice.invoiceNumber}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {format(new Date(invoice.createdAt), "MMM d, yyyy")}
+{format(new Date(invoice.CreatedOn || invoice.createdAt), "MMM d, yyyy")}
                       </div>
                     </td>
                     <td className="py-4 px-4">
                       <div className="font-medium text-gray-900">
-                        {getClientName(invoice.clientId)}
+{getClientName(invoice.client_id_c || invoice.clientId)}
                       </div>
                     </td>
                     <td className="py-4 px-4">
                       <div className="font-semibold text-gray-900">
-                        {formatCurrency(invoice.total)}
+{formatCurrency(invoice.total_c || invoice.total)}
                       </div>
                     </td>
                     <td className="py-4 px-4">
-                      <Badge variant={getStatusVariant(invoice.status)}>
-                        {invoice.status}
+<Badge variant={getStatusVariant(invoice.status_c || invoice.status)}>
+                        {invoice.status_c || invoice.status}
                       </Badge>
                     </td>
                     <td className="py-4 px-4">
-                      <div className="text-gray-900">
-                        {format(new Date(invoice.dueDate), "MMM d, yyyy")}
+<div className="text-gray-900">
+                        {format(new Date(invoice.due_date_c || invoice.dueDate), "MMM d, yyyy")}
                       </div>
                     </td>
                     <td className="py-4 px-4">
@@ -288,7 +290,7 @@ const Invoices = () => {
                         >
                           <ApperIcon name="Edit" size={16} />
                         </Button>
-                        {invoice.status === "Draft" && (
+{(invoice.status_c || invoice.status) === "Draft" && (
                           <Button
                             variant="ghost"
                             size="sm"
@@ -325,7 +327,7 @@ const Invoices = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">Paid</p>
               <p className="text-lg font-bold text-gray-900">
-                {invoices.filter(i => i.status === "Paid").length}
+{invoices.filter(i => (i.status_c || i.status) === "Paid").length}
               </p>
             </div>
           </div>
@@ -339,7 +341,7 @@ const Invoices = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">Sent</p>
               <p className="text-lg font-bold text-gray-900">
-                {invoices.filter(i => i.status === "Sent").length}
+{invoices.filter(i => (i.status_c || i.status) === "Sent").length}
               </p>
             </div>
           </div>
@@ -353,7 +355,7 @@ const Invoices = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">Overdue</p>
               <p className="text-lg font-bold text-gray-900">
-                {invoices.filter(i => i.status === "Overdue").length}
+{invoices.filter(i => (i.status_c || i.status) === "Overdue").length}
               </p>
             </div>
           </div>
@@ -367,7 +369,7 @@ const Invoices = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">Draft</p>
               <p className="text-lg font-bold text-gray-900">
-                {invoices.filter(i => i.status === "Draft").length}
+{invoices.filter(i => (i.status_c || i.status) === "Draft").length}
               </p>
             </div>
           </div>
