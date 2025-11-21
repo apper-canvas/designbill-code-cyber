@@ -186,7 +186,7 @@ const response = await apperClient.updateRecord(this.tableName, params);
     return await this.update(id, updateData);
   }
 
-  // Authentication methods will be handled by ApperUI
+// Authentication methods will be handled by ApperUI
   async authenticate(email, password) {
     // This method is no longer used with ApperUI
     // Authentication is handled automatically by the SDK
@@ -198,7 +198,6 @@ const response = await apperClient.updateRecord(this.tableName, params);
     // Registration is handled automatically by the SDK
     throw new Error("Registration is handled by ApperUI");
   }
-
   async logout() {
     // This method is no longer used with ApperUI
     // Logout is handled by the Root component
