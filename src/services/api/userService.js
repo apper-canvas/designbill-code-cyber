@@ -1,5 +1,6 @@
-import { getApperClient } from "@/services/apperClient";
 import { toast } from "react-toastify";
+import React from "react";
+import { getApperClient } from "@/services/apperClient";
 
 class UserService {
   constructor() {
@@ -205,7 +206,7 @@ const response = await apperClient.updateRecord(this.tableName, params);
   }
 
   // File upload methods for logo
-  async uploadLogo(file) {
+async uploadLogo(file) {
     try {
       // This will be handled by ApperFileFieldComponent
       // Return a placeholder response
@@ -213,8 +214,9 @@ const response = await apperClient.updateRecord(this.tableName, params);
     } catch (error) {
       console.error("Error uploading logo:", error);
       return { success: false, error: error.message };
-    }
+}
   }
 }
+
 const userService = new UserService();
 export default userService;
