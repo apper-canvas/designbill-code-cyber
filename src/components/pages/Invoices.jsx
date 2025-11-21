@@ -126,23 +126,23 @@ switch (status) {
     }
   }
 
-  const handleSendInvoice = async (invoiceId) => {
+const handleSendInvoice = async (invoiceId) => {
     try {
       await invoiceService.sendInvoice(invoiceId, {
         subject: "Invoice from Johnson Interior Design",
         message: "Please find your invoice attached. Payment is due within 30 days."
-      })
+      });
       
-// Update local state
+      // Update local state
       setInvoices(invoices.map(inv => 
         inv.Id === invoiceId ? { ...inv, status_c: "Sent", status: "Sent" } : inv
-      ))
+      ));
       
-      toast.success("Invoice sent successfully")
+      toast.success("Invoice sent successfully");
     } catch (err) {
-      toast.error("Failed to send invoice")
-  }
-
+      toast.error("Failed to send invoice");
+    }
+  };
   const statusOptions = [
     { value: "all", label: "All Statuses" },
     { value: "draft", label: "Draft" },

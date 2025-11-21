@@ -207,7 +207,5 @@ class ClientService {
     }
   }
 }
-
 const clientService = new ClientService();
 export default clientService;
-export default new ClientService()
