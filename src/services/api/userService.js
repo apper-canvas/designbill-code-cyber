@@ -149,7 +149,7 @@ const response = await apperClient.updateRecord(this.tableName, params);
         return null;
       }
 
-      if (response.results) {
+if (response.results) {
         const successful = response.results.filter(r => r.success);
         const failed = response.results.filter(r => !r.success);
         
@@ -162,6 +162,7 @@ const response = await apperClient.updateRecord(this.tableName, params);
         }
         return successful.length > 0 ? successful[0].data : null;
       }
+      return null;
     } catch (error) {
       console.error("Error updating user:", error?.response?.data?.message || error);
       return null;
