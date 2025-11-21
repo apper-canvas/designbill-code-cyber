@@ -149,7 +149,7 @@ const response = await apperClient.updateRecord(this.tableName, params);
         return null;
       }
 
-if (response.results) {
+      if (response.results) {
         const successful = response.results.filter(r => r.success);
         const failed = response.results.filter(r => !r.success);
         
