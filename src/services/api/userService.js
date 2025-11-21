@@ -1,5 +1,4 @@
 import { toast } from "react-toastify";
-import React from "react";
 import { getApperClient } from "@/services/apperClient";
 
 class UserService {
@@ -188,16 +187,16 @@ const response = await apperClient.updateRecord(this.tableName, params);
   }
 
 // Authentication methods will be handled by ApperUI
-  async authenticate(email, password) {
+async authenticate(email, password) {
     // This method is no longer used with ApperUI
     // Authentication is handled automatically by the SDK
-    throw new Error("Authentication is handled by ApperUI");
+    return { success: false, message: "Authentication is handled by ApperUI" };
   }
 
-  async register(userData) {
+async register(userData) {
     // This method is no longer used with ApperUI  
     // Registration is handled automatically by the SDK
-    throw new Error("Registration is handled by ApperUI");
+    return { success: false, message: "Registration is handled by ApperUI" };
   }
   async logout() {
     // This method is no longer used with ApperUI
