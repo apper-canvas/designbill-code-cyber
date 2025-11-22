@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from "react"
-import { toast } from "react-toastify"
+import Card from "@/components/atoms/Card"
 import Button from "@/components/atoms/Button"
 import FormField from "@/components/molecules/FormField"
-import Card from "@/components/atoms/Card"
 import Loading from "@/components/ui/Loading"
 import ErrorView from "@/components/ui/ErrorView"
 import ApperIcon from "@/components/ApperIcon"
-import ApperFileFieldComponent from "@/components/atoms/FileUploader/ApperFileFieldComponent"
 import userService from "@/services/api/userService"
+import { toast } from "react-toastify"
 
 const Settings = () => {
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
+  const [saving, setSaving] = useState(false)
   const [activeTab, setActiveTab] = useState("profile")
-
-  // Form data states
+  
   const [profileData, setProfileData] = useState({
     companyName: "",
     email: "",
@@ -34,7 +32,7 @@ const Settings = () => {
     logo: "",
     brandColors: {
       primary: "#2C5F63",
-      secondary: "#8B7355",
+      secondary: "#8B7355", 
       accent: "#D4A574"
     }
   })
@@ -56,41 +54,35 @@ const Settings = () => {
       setError("")
       const userData = await userService.getCurrentUser()
       
-      if (userData) {
-        setProfileData({
-          companyName: userData.company_name_c || userData.companyName || "",
-          email: userData.email_c || userData.email || "",
-          phone: userData.phone_c || userData.phone || "",
-          website: userData.website_c || userData.website || "",
-          address: userData.address_c ? 
-            (typeof userData.address_c === 'string' ? JSON.parse(userData.address_c) : userData.address_c) :
-            (userData.address || {
-              street: "",
-              city: "",
-              state: "",
-              zip: "",
-              country: "USA"
-            })
-        })
+      setProfileData({
+        companyName: userData.companyName || "",
+        email: userData.email || "",
+        phone: userData.phone || "",
+        website: userData.website || "",
+        address: userData.address || {
+          street: "",
+          city: "",
+          state: "",
+          zip: "",
+          country: "USA"
+        }
+      })
 
-        setBrandingData({
-          logo: userData.logo_c || userData.logo || "",
-          brandColors: userData.brand_colors_c ? 
-            (typeof userData.brand_colors_c === 'string' ? JSON.parse(userData.brand_colors_c) : userData.brand_colors_c) :
-            (userData.brandColors || {
-              primary: "#2C5F63",
-              secondary: "#8B7355",
-              accent: "#D4A574"
-            })
-        })
+      setBrandingData({
+        logo: userData.logo || "",
+        brandColors: userData.brandColors || {
+          primary: "#2C5F63",
+          secondary: "#8B7355",
+          accent: "#D4A574"
+        }
+      })
 
-        setTaxData({
-          taxRate: userData.tax_rate_c || userData.taxRate || 8.5,
-          paymentTerms: userData.payment_terms_c || userData.paymentTerms || 30,
-          invoicePrefix: userData.invoice_prefix_c || userData.invoicePrefix || "INV",
-          invoiceNumbering: userData.invoice_numbering_c || userData.invoiceNumbering || "sequential"
-        })
-      }
+      setTaxData({
+        taxRate: userData.taxRate || 8.5,
+        paymentTerms: userData.paymentTerms || 30,
+        invoicePrefix: "INV",
+        invoiceNumbering: "sequential"
+      })
     } catch (err) {
       setError("Failed to load user settings")
     } finally {
@@ -102,15 +94,8 @@ const Settings = () => {
     try {
       setSaving(true)
       await userService.update(1, {
-        company_name_c: profileData.companyName,
-        email_c: profileData.email,
-        phone_c: profileData.phone,
-        website_c: profileData.website,
-        address_c: profileData.address,
-        tax_rate_c: taxData.taxRate,
-        payment_terms_c: taxData.paymentTerms,
-        invoice_prefix_c: taxData.invoicePrefix,
-        invoice_numbering_c: taxData.invoiceNumbering
+        ...profileData,
+        ...taxData
       })
       toast.success("Profile settings saved successfully")
     } catch (err) {
@@ -132,9 +117,9 @@ const Settings = () => {
     }
   }
 
-  const updateProfileData = (key, value) => {
-    if (key.includes('.')) {
-      const [parent, child] = key.split('.')
+  const updateProfileData = (field, value) => {
+    if (field.includes(".")) {
+      const [parent, child] = field.split(".")
       setProfileData(prev => ({
         ...prev,
         [parent]: {
@@ -143,16 +128,13 @@ const Settings = () => {
         }
       }))
     } else {
-      setProfileData(prev => ({
-        ...prev,
-        [key]: value
-      }))
+      setProfileData(prev => ({ ...prev, [field]: value }))
     }
   }
 
-  const updateBrandingData = (key, value) => {
-    if (key.includes('.')) {
-      const [parent, child] = key.split('.')
+  const updateBrandingData = (field, value) => {
+    if (field.includes(".")) {
+      const [parent, child] = field.split(".")
       setBrandingData(prev => ({
         ...prev,
         [parent]: {
@@ -161,138 +143,140 @@ const Settings = () => {
         }
       }))
     } else {
-      setBrandingData(prev => ({
-        ...prev,
-        [key]: value
-      }))
+      setBrandingData(prev => ({ ...prev, [field]: value }))
     }
   }
 
-  const updateTaxData = (key, value) => {
-    setTaxData(prev => ({
-      ...prev,
-      [key]: value
-    }))
+  const updateTaxData = (field, value) => {
+    setTaxData(prev => ({ ...prev, [field]: value }))
   }
-
-  if (loading) return <Loading type="page" />
-  if (error) return <ErrorView error={error} onRetry={loadUserData} />
 
   const tabs = [
-    { id: "profile", label: "Company Profile", icon: "Building" },
-    { id: "branding", label: "Branding", icon: "Palette" },
-    { id: "billing", label: "Billing & Tax", icon: "Calculator" }
+    { id: "profile", name: "Profile", icon: "User" },
+    { id: "branding", name: "Branding", icon: "Palette" },
+    { id: "invoices", name: "Invoice Settings", icon: "FileText" },
+    { id: "payments", name: "Payments", icon: "CreditCard" }
   ]
+
+  if (loading) return <Loading />
+  if (error) return <ErrorView error={error} onRetry={loadUserData} />
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900 font-display">Settings</h1>
-        <p className="mt-2 text-gray-600">Manage your account settings and preferences</p>
+        <p className="text-gray-600 mt-1">Manage your account and business preferences</p>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`whitespace-nowrap border-b-2 py-2 px-1 text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? "border-primary-500 text-primary-600"
-                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <ApperIcon name={tab.icon} size={16} />
-                {tab.label}
-              </div>
-            </button>
-          ))}
-        </nav>
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Sidebar Navigation */}
+        <div className="lg:col-span-1">
+          <Card className="p-4">
+            <nav className="space-y-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition-colors ${
+                    activeTab === tab.id
+                      ? "bg-gradient-to-r from-primary-100 to-primary-50 text-primary-700 font-medium"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <ApperIcon name={tab.icon} size={20} />
+                  <span>{tab.name}</span>
+                </button>
+              ))}
+            </nav>
+          </Card>
+        </div>
 
-      {/* Tab Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+        {/* Content Area */}
+        <div className="lg:col-span-3">
           {/* Profile Tab */}
           {activeTab === "profile" && (
-            <Card className="p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-6">Company Information</h3>
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <FormField
-                    label="Company Name"
-                    value={profileData.companyName}
-                    onChange={(e) => updateProfileData("companyName", e.target.value)}
-                    placeholder="Your company name"
-                  />
-                  <FormField
-                    label="Email Address"
-                    type="email"
-                    value={profileData.email}
-                    onChange={(e) => updateProfileData("email", e.target.value)}
-                    placeholder="company@example.com"
-                  />
+            <Card>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900 font-display">Company Profile</h2>
+                  <Button
+                    variant="primary"
+                    onClick={handleSaveProfile}
+                    loading={saving}
+                    icon="Save"
+                  >
+                    Save Changes
+                  </Button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <FormField
-                    label="Phone Number"
-                    type="tel"
-                    value={profileData.phone}
-                    onChange={(e) => updateProfileData("phone", e.target.value)}
-                    placeholder="(555) 123-4567"
-                  />
-                  <FormField
-                    label="Website"
-                    type="url"
-                    value={profileData.website}
-                    onChange={(e) => updateProfileData("website", e.target.value)}
-                    placeholder="https://yourcompany.com"
-                  />
-                </div>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      label="Company Name"
+                      value={profileData.companyName}
+                      onChange={(e) => updateProfileData("companyName", e.target.value)}
+                      placeholder="Johnson Interior Design"
+                      required
+                    />
+                    <FormField
+                      label="Email Address"
+                      type="email"
+                      value={profileData.email}
+                      onChange={(e) => updateProfileData("email", e.target.value)}
+                      placeholder="sarah@johnsonstudio.com"
+                      required
+                    />
+                  </div>
 
-                <div>
-                  <h4 className="text-base font-medium text-gray-900 mb-4">Business Address</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      label="Phone Number"
+                      type="tel"
+                      value={profileData.phone}
+                      onChange={(e) => updateProfileData("phone", e.target.value)}
+                      placeholder="(555) 123-4567"
+                    />
+                    <FormField
+                      label="Website"
+                      type="url"
+                      value={profileData.website}
+                      onChange={(e) => updateProfileData("website", e.target.value)}
+                      placeholder="https://johnsonstudio.com"
+                    />
+                  </div>
+
                   <div className="space-y-4">
+                    <h3 className="text-lg font-medium text-gray-900">Business Address</h3>
+                    
                     <FormField
                       label="Street Address"
                       value={profileData.address.street}
                       onChange={(e) => updateProfileData("address.street", e.target.value)}
-                      placeholder="123 Main Street"
+                      placeholder="123 Design Avenue"
                     />
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       <FormField
                         label="City"
                         value={profileData.address.city}
                         onChange={(e) => updateProfileData("address.city", e.target.value)}
+                        placeholder="San Francisco"
                       />
                       <FormField
                         label="State"
                         value={profileData.address.state}
                         onChange={(e) => updateProfileData("address.state", e.target.value)}
+                        placeholder="CA"
                       />
                       <FormField
                         label="ZIP Code"
                         value={profileData.address.zip}
                         onChange={(e) => updateProfileData("address.zip", e.target.value)}
+                        placeholder="94102"
                       />
                     </div>
                   </div>
-                </div>
-
-                <div className="pt-4">
-                  <Button
-                    onClick={handleSaveProfile}
-                    loading={saving}
-                    disabled={saving}
-                    icon="Save"
-                  >
-                    Save Profile
-                  </Button>
                 </div>
               </div>
             </Card>
@@ -300,91 +284,106 @@ const Settings = () => {
 
           {/* Branding Tab */}
           {activeTab === "branding" && (
-            <Card className="p-6">
-              <div className="space-y-8">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Company Logo</h3>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-                    <div className="mb-4">
-                      <p className="text-gray-600 mb-4">Upload your company logo to appear on invoices</p>
-                      <ApperFileFieldComponent
-                        elementId="logo-upload"
-                        config={{
-                          fieldName: 'logo_c',
-                          fieldKey: 'logo_c',
-                          tableName: 'user_c',
-                          apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-                          apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY,
-                          existingFiles: brandingData.logo ? [brandingData.logo] : [],
-                          fileCount: brandingData.logo ? 1 : 0,
-                        }}
-                      />
-                    </div>
-                  </div>
+            <Card>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900 font-display">Brand Customization</h2>
+                  <Button
+                    variant="primary"
+                    onClick={handleSaveBranding}
+                    loading={saving}
+                    icon="Save"
+                  >
+                    Save Changes
+                  </Button>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-6">Brand Colors</h3>
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Primary Color</label>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="color"
-                          value={brandingData.brandColors.primary}
-                          onChange={(e) => updateBrandingData("brandColors.primary", e.target.value)}
-                          className="h-10 w-16 rounded border border-gray-300 cursor-pointer"
-                        />
-                        <input
-                          type="text"
-                          value={brandingData.brandColors.primary}
-                          onChange={(e) => updateBrandingData("brandColors.primary", e.target.value)}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
-                        />
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Company Logo</h3>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                      <div className="bg-gradient-to-br from-primary-600 to-primary-700 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <ApperIcon name="PaintBucket" size={32} className="text-white" />
+                      </div>
+                      <p className="text-gray-600 mb-4">Upload your company logo to appear on invoices</p>
+                      <Button variant="outline" icon="Upload">
+                        Upload Logo
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Brand Colors</h3>
+                    <p className="text-gray-600 mb-6">Customize your invoice colors to match your brand identity</p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Primary Color
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={brandingData.brandColors.primary}
+                            onChange={(e) => updateBrandingData("brandColors.primary", e.target.value)}
+                            className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                          <input
+                            type="text"
+                            value={brandingData.brandColors.primary}
+                            onChange={(e) => updateBrandingData("brandColors.primary", e.target.value)}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Secondary Color
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={brandingData.brandColors.secondary}
+                            onChange={(e) => updateBrandingData("brandColors.secondary", e.target.value)}
+                            className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                          <input
+                            type="text"
+                            value={brandingData.brandColors.secondary}
+                            onChange={(e) => updateBrandingData("brandColors.secondary", e.target.value)}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Accent Color
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="color"
+                            value={brandingData.brandColors.accent}
+                            onChange={(e) => updateBrandingData("brandColors.accent", e.target.value)}
+                            className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                          />
+                          <input
+                            type="text"
+                            value={brandingData.brandColors.accent}
+                            onChange={(e) => updateBrandingData("brandColors.accent", e.target.value)}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Secondary Color</label>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="color"
-                          value={brandingData.brandColors.secondary}
-                          onChange={(e) => updateBrandingData("brandColors.secondary", e.target.value)}
-                          className="h-10 w-16 rounded border border-gray-300 cursor-pointer"
-                        />
-                        <input
-                          type="text"
-                          value={brandingData.brandColors.secondary}
-                          onChange={(e) => updateBrandingData("brandColors.secondary", e.target.value)}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Accent Color</label>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="color"
-                          value={brandingData.brandColors.accent}
-                          onChange={(e) => updateBrandingData("brandColors.accent", e.target.value)}
-                          className="h-10 w-16 rounded border border-gray-300 cursor-pointer"
-                        />
-                        <input
-                          type="text"
-                          value={brandingData.brandColors.accent}
-                          onChange={(e) => updateBrandingData("brandColors.accent", e.target.value)}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono text-sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">Color Preview</label>
+                    {/* Preview */}
+                    <div className="mt-6 p-4 border border-gray-200 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-3">Preview</h4>
                       <div className="flex gap-4">
                         <div 
-                          className="w-16 h-16 rounded-lg flex items-center justify-center text-white font-semibold text-sm"
+                          className="w-16 h-16 rounded-lg flex items-center justify-center text-white font-semibold"
                           style={{ backgroundColor: brandingData.brandColors.primary }}
                         >
                           Primary
@@ -404,117 +403,151 @@ const Settings = () => {
                       </div>
                     </div>
                   </div>
-
-                  <div className="pt-6">
-                    <Button
-                      onClick={handleSaveBranding}
-                      loading={saving}
-                      disabled={saving}
-                      icon="Save"
-                    >
-                      Save Branding
-                    </Button>
-                  </div>
                 </div>
               </div>
             </Card>
           )}
 
-          {/* Billing Tab */}
-          {activeTab === "billing" && (
-            <Card className="p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-6">Billing & Tax Settings</h3>
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <FormField
-                    label="Default Tax Rate (%)"
-                    type="number"
-                    step="0.01"
-                    value={taxData.taxRate}
-                    onChange={(e) => updateTaxData("taxRate", parseFloat(e.target.value) || 0)}
-                    placeholder="8.5"
-                  />
-                  <FormField
-                    label="Payment Terms (Days)"
-                    type="number"
-                    value={taxData.paymentTerms}
-                    onChange={(e) => updateTaxData("paymentTerms", parseInt(e.target.value) || 30)}
-                    placeholder="30"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <FormField
-                    label="Invoice Prefix"
-                    value={taxData.invoicePrefix}
-                    onChange={(e) => updateTaxData("invoicePrefix", e.target.value)}
-                    placeholder="INV"
-                  />
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Invoice Numbering</label>
-                    <select
-                      value={taxData.invoiceNumbering}
-                      onChange={(e) => updateTaxData("invoiceNumbering", e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    >
-                      <option value="sequential">Sequential (001, 002, 003...)</option>
-                      <option value="yearly">Yearly Reset (2024-001, 2024-002...)</option>
-                      <option value="monthly">Monthly Reset (202401-001, 202401-002...)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Preview</h4>
-                  <div className="text-sm text-gray-600">
-                    <p>
-                      With your current settings, your next invoice will be numbered: <strong>{taxData.invoicePrefix}-2024-007</strong>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4">
+          {/* Invoice Settings Tab */}
+          {activeTab === "invoices" && (
+            <Card>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900 font-display">Invoice Settings</h2>
                   <Button
+                    variant="primary"
                     onClick={handleSaveProfile}
                     loading={saving}
-                    disabled={saving}
                     icon="Save"
                   >
-                    Save Settings
+                    Save Changes
                   </Button>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      label="Default Tax Rate (%)"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      value={taxData.taxRate}
+                      onChange={(e) => updateTaxData("taxRate", parseFloat(e.target.value) || 0)}
+                    />
+                    <FormField
+                      label="Payment Terms (Days)"
+                      type="number"
+                      min="1"
+                      max="365"
+                      value={taxData.paymentTerms}
+                      onChange={(e) => updateTaxData("paymentTerms", parseInt(e.target.value) || 30)}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      label="Invoice Prefix"
+                      value={taxData.invoicePrefix}
+                      onChange={(e) => updateTaxData("invoicePrefix", e.target.value)}
+                      placeholder="INV"
+                    />
+                    <FormField
+                      label="Numbering System"
+                    >
+                      <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        value={taxData.invoiceNumbering}
+                        onChange={(e) => updateTaxData("invoiceNumbering", e.target.value)}
+                      >
+                        <option value="sequential">Sequential (001, 002, 003...)</option>
+                        <option value="yearly">Yearly Reset (2024-001, 2024-002...)</option>
+                        <option value="monthly">Monthly Reset (01-001, 01-002...)</option>
+                      </select>
+                    </FormField>
+                  </div>
+
+                  <div className="p-4 bg-gradient-to-r from-info/10 to-info/5 rounded-lg">
+                    <div className="flex gap-3">
+                      <ApperIcon name="Info" size={20} className="text-info flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-1">Invoice Preview</h4>
+                        <p className="text-sm text-gray-600">
+                          With your current settings, your next invoice will be numbered: <strong>{taxData.invoicePrefix}-2024-007</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Card>
           )}
-        </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Stats</h3>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Profile Completion</span>
-                <span className="font-semibold text-primary-600">85%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Last Updated</span>
-                <span className="text-sm text-gray-500">2 days ago</span>
-              </div>
-            </div>
-          </Card>
+          {/* Payments Tab */}
+          {activeTab === "payments" && (
+            <Card>
+              <div className="p-6">
+                <h2 className="text-xl font-semibold text-gray-900 font-display mb-6">Payment Settings</h2>
 
-          <Card className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Support</h3>
-            <div className="space-y-3">
-              <Button variant="outline" size="sm" className="w-full justify-start" icon="HelpCircle">
-                View Documentation
-              </Button>
-              <Button variant="outline" size="sm" className="w-full justify-start" icon="Mail">
-                Contact Support
-              </Button>
-            </div>
-          </Card>
+                <div className="space-y-6">
+                  <div className="p-6 border border-gray-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-2 rounded-lg">
+                          <ApperIcon name="CreditCard" size={20} className="text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900">Stripe Integration</h3>
+                          <p className="text-sm text-gray-600">Accept online payments securely</p>
+                        </div>
+                      </div>
+                      <Button variant="primary">
+                        Configure Stripe
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card variant="premium">
+                      <div className="text-center p-4">
+                        <div className="bg-gradient-to-br from-success/20 to-success/10 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
+                          <ApperIcon name="CheckCircle" size={24} className="text-success" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 mb-2">Payment Links</h4>
+                        <p className="text-sm text-gray-600">
+                          Automatically generate secure payment links for your invoices
+                        </p>
+                      </div>
+                    </Card>
+
+                    <Card variant="premium">
+                      <div className="text-center p-4">
+                        <div className="bg-gradient-to-br from-info/20 to-info/10 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
+                          <ApperIcon name="Smartphone" size={24} className="text-info" />
+                        </div>
+                        <h4 className="font-semibold text-gray-900 mb-2">Mobile Payments</h4>
+                        <p className="text-sm text-gray-600">
+                          Accept payments on the go with mobile-optimized checkout
+                        </p>
+                      </div>
+                    </Card>
+                  </div>
+
+                  <div className="p-4 bg-gradient-to-r from-warning/10 to-warning/5 rounded-lg">
+                    <div className="flex gap-3">
+                      <ApperIcon name="AlertTriangle" size={20} className="text-warning flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-1">Setup Required</h4>
+                        <p className="text-sm text-gray-600">
+                          Connect your Stripe account to start accepting online payments. This typically takes 5-10 minutes to complete.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
         </div>
       </div>
     </div>

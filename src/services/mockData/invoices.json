@@ -1,0 +1,256 @@
+[
+  {
+    "Id": 1,
+    "userId": 1,
+    "clientId": 1,
+    "projectId": 1,
+    "invoiceNumber": "INV-2024-001",
+    "status": "Paid",
+    "issueDate": "2024-02-01",
+    "dueDate": "2024-03-03",
+    "lineItems": [
+      {
+        "id": 1,
+        "type": "Design Service",
+        "description": "Initial consultation and space planning",
+        "quantity": 8,
+        "rate": 150.00,
+        "amount": 1200.00
+      },
+      {
+        "id": 2,
+        "type": "Design Service", 
+        "description": "3D renderings and design concepts",
+        "quantity": 12,
+        "rate": 125.00,
+        "amount": 1500.00
+      },
+      {
+        "id": 3,
+        "type": "Material",
+        "description": "Premium fabric for custom sofa",
+        "quantity": 15,
+        "rate": 85.00,
+        "amount": 1275.00
+      }
+    ],
+    "subtotal": 3975.00,
+    "taxRate": 8.5,
+    "taxAmount": 337.88,
+    "discount": 0.00,
+    "total": 4312.88,
+    "notes": "Thank you for choosing Johnson Interior Design. Payment due within 30 days.",
+    "paymentLink": "https://pay.stripe.com/invoice/acct_abc123",
+    "paidAt": "2024-02-28T15:30:00Z",
+    "createdAt": "2024-02-01T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "userId": 1,
+    "clientId": 1,
+    "projectId": 1,
+    "invoiceNumber": "INV-2024-002",
+    "status": "Sent",
+    "issueDate": "2024-03-01",
+    "dueDate": "2024-03-31",
+    "lineItems": [
+      {
+        "id": 1,
+        "type": "Design Service",
+        "description": "Project management and coordination",
+        "quantity": 20,
+        "rate": 125.00,
+        "amount": 2500.00
+      },
+      {
+        "id": 2,
+        "type": "Material",
+        "description": "Custom dining table - walnut wood",
+        "quantity": 1,
+        "rate": 3200.00,
+        "amount": 3200.00
+      },
+      {
+        "id": 3,
+        "type": "Material",
+        "description": "Designer lighting fixtures (set of 3)",
+        "quantity": 1,
+        "rate": 1800.00,
+        "amount": 1800.00
+      }
+    ],
+    "subtotal": 7500.00,
+    "taxRate": 8.5,
+    "taxAmount": 637.50,
+    "discount": 200.00,
+    "total": 7937.50,
+    "notes": "Second phase of living room renovation. Custom pieces ordered.",
+    "paymentLink": "https://pay.stripe.com/invoice/acct_def456",
+    "paidAt": null,
+    "createdAt": "2024-03-01T09:15:00Z"
+  },
+  {
+    "Id": 3,
+    "userId": 1,
+    "clientId": 2,
+    "projectId": 2,
+    "invoiceNumber": "INV-2024-003",
+    "status": "Draft",
+    "issueDate": "2024-03-15",
+    "dueDate": "2024-04-14",
+    "lineItems": [
+      {
+        "id": 1,
+        "type": "Design Service",
+        "description": "Office space assessment and planning",
+        "quantity": 16,
+        "rate": 150.00,
+        "amount": 2400.00
+      },
+      {
+        "id": 2,
+        "type": "Design Service",
+        "description": "Furniture selection and procurement",
+        "quantity": 24,
+        "rate": 100.00,
+        "amount": 2400.00
+      }
+    ],
+    "subtotal": 4800.00,
+    "taxRate": 8.5,
+    "taxAmount": 408.00,
+    "discount": 0.00,
+    "total": 5208.00,
+    "notes": "Initial phase for TechCorp office design project.",
+    "paymentLink": "",
+    "paidAt": null,
+    "createdAt": "2024-03-15T14:20:00Z"
+  },
+  {
+    "Id": 4,
+    "userId": 1,
+    "clientId": 3,
+    "projectId": 3,
+    "invoiceNumber": "INV-2024-004",
+    "status": "Paid",
+    "issueDate": "2023-12-01",
+    "dueDate": "2023-12-31",
+    "lineItems": [
+      {
+        "id": 1,
+        "type": "Design Service",
+        "description": "Creative workspace design - Phase 1",
+        "quantity": 32,
+        "rate": 140.00,
+        "amount": 4480.00
+      },
+      {
+        "id": 2,
+        "type": "Material",
+        "description": "Artistic wall installations",
+        "quantity": 5,
+        "rate": 800.00,
+        "amount": 4000.00
+      },
+      {
+        "id": 3,
+        "type": "Material",
+        "description": "Custom conference table",
+        "quantity": 1,
+        "rate": 2800.00,
+        "amount": 2800.00
+      }
+    ],
+    "subtotal": 11280.00,
+    "taxRate": 8.5,
+    "taxAmount": 958.80,
+    "discount": 500.00,
+    "total": 11738.80,
+    "notes": "First phase of Creative Space headquarters design completed.",
+    "paymentLink": "https://pay.stripe.com/invoice/acct_ghi789",
+    "paidAt": "2023-12-20T10:45:00Z",
+    "createdAt": "2023-12-01T11:30:00Z"
+  },
+  {
+    "Id": 5,
+    "userId": 1,
+    "clientId": 3,
+    "projectId": 3,
+    "invoiceNumber": "INV-2024-005",
+    "status": "Overdue",
+    "issueDate": "2024-01-15",
+    "dueDate": "2024-02-14",
+    "lineItems": [
+      {
+        "id": 1,
+        "type": "Design Service",
+        "description": "Final phase design and installation",
+        "quantity": 28,
+        "rate": 140.00,
+        "amount": 3920.00
+      },
+      {
+        "id": 2,
+        "type": "Material",
+        "description": "Specialty acoustic panels",
+        "quantity": 12,
+        "rate": 450.00,
+        "amount": 5400.00
+      }
+    ],
+    "subtotal": 9320.00,
+    "taxRate": 8.5,
+    "taxAmount": 792.20,
+    "discount": 0.00,
+    "total": 10112.20,
+    "notes": "Final invoice for Creative Space project. Payment overdue.",
+    "paymentLink": "https://pay.stripe.com/invoice/acct_jkl012",
+    "paidAt": null,
+    "createdAt": "2024-01-15T13:00:00Z"
+  },
+  {
+    "Id": 6,
+    "userId": 1,
+    "clientId": 4,
+    "projectId": 4,
+    "invoiceNumber": "INV-2024-006",
+    "status": "Paid",
+    "issueDate": "2024-02-01",
+    "dueDate": "2024-03-02",
+    "lineItems": [
+      {
+        "id": 1,
+        "type": "Design Service",
+        "description": "Luxury home design consultation",
+        "quantity": 40,
+        "rate": 200.00,
+        "amount": 8000.00
+      },
+      {
+        "id": 2,
+        "type": "Design Service",
+        "description": "Custom furniture design",
+        "quantity": 60,
+        "rate": 175.00,
+        "amount": 10500.00
+      },
+      {
+        "id": 3,
+        "type": "Material",
+        "description": "Premium marble countertops",
+        "quantity": 1,
+        "rate": 12000.00,
+        "amount": 12000.00
+      }
+    ],
+    "subtotal": 30500.00,
+    "taxRate": 8.5,
+    "taxAmount": 2592.50,
+    "discount": 1000.00,
+    "total": 32092.50,
+    "notes": "First installment for Thompson luxury home renovation.",
+    "paymentLink": "https://pay.stripe.com/invoice/acct_mno345",
+    "paidAt": "2024-02-25T09:30:00Z",
+    "createdAt": "2024-02-01T08:45:00Z"
+  }
+]
